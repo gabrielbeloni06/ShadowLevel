@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>ShadowLevel • Central</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/central.css">
+</head>
+<body>
+  <div class="bg">
+    <canvas id="grid3d"></canvas>
+    <div class="nebula layer"></div>
+    <canvas id="orbits"></canvas>
+  </div>
+  <div class="overlay"></div>
+  <header class="header">
+    <div class="brand">
+      <span class="logo">◇</span>
+      <h1>ShadowLevel</h1>
+      <span class="tag">Central do Sistema</span>
+    </div>
+    <nav class="top-actions">
+      <a href="../../public/index.html" class="home-link">Home</a>
+    </nav>
+  </header>
+  <main class="central">
+    <section class="status-panel">
+      <div class="status-card">
+        <h2 class="status-title">Sistema</h2>
+        <div class="status-grid">
+          <div class="status-item">
+            <span class="label">Estado:</span>
+            <span class="value online">Online</span>
+          </div>
+          <div class="status-item">
+            <span class="label">Uptime:</span>
+            <span id="uptime" class="value">00:00:00</span>
+          </div>
+          <div class="status-item">
+            <span class="label">Latência:</span>
+            <span id="latency" class="value">3 ms</span>
+          </div>
+          <div class="status-item">
+            <span class="label">Módulos ativos:</span>
+            <span id="modules" class="value">3</span>
+          </div>
+        </div>
+        <div class="pulse-bar" aria-hidden="true">
+          <span class="pulse"></span>
+        </div>
+      </div>
+    </section>
+    <section class="hub-menu">
+      <div class="hub-card" data-tilt data-href="../src/pages/pong.html">
+        <div class="hub-decor hub-particles"></div>
+        <h3>Pong</h3>
+        <p>Arcade com controle por gestos. Teste reflexos e precisão.</p>
+        <div class="chip">Arcade</div>
+      </div>
+
+      <div class="hub-card" data-tilt data-href="../src/pages/powers.html">
+        <div class="hub-decor hub-auras"></div>
+        <h3>Powers</h3>
+        <p>Gestos e habilidades. Mapeie, desencadeie e visualize poderes.</p>
+        <div class="chip">Gestos</div>
+      </div>
+
+      <div class="hub-card" data-tilt data-href="../src/pages/music.html">
+        <div class="hub-decor hub-waves"></div>
+        <h3>Music</h3>
+        <p>Controle musical com gestos. Playlists, efeitos e visualizações.</p>
+        <div class="chip">Áudio</div>
+      </div>
+    </section>
+    <section class="previews">
+      <div class="preview-card" data-tilt>
+        <div class="preview-canvas-wrap">
+          <canvas id="previewPong"></canvas>
+        </div>
+        <div class="preview-content">
+          <h4>Preview Pong</h4>
+          <p>Simulação leve de bolas e barras com glow.</p>
+        </div>
+      </div>
+
+      <div class="preview-card" data-tilt>
+        <div class="preview-canvas-wrap">
+          <canvas id="previewPowers"></canvas>
+        </div>
+        <div class="preview-content">
+          <h4>Preview Powers</h4>
+          <p>Runas giratórias e trilhas energéticas.</p>
+        </div>
+      </div>
+
+      <div class="preview-card" data-tilt>
+        <div class="preview-canvas-wrap">
+          <canvas id="previewMusic"></canvas>
+        </div>
+        <div class="preview-content">
+          <h4>Preview Music</h4>
+          <p>Equalizador holográfico com barras animadas.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="footer">
+    <span>Sala de Comando • ShadowLevel</span>
+  </footer>
+
+  <script src="../js/central.js"></script>
+</body>
+</html>
