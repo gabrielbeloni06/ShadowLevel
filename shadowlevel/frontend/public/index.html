@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>ShadowLevel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../src/css/index.css">
+</head>
+<body>
+  <audio id="ambience" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7e7f3f9f3b.mp3?filename=dark-ambient-110397.mp3" loop preload="auto"></audio>
+  <audio id="ping" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7e7f3f9f3b.mp3?filename=dark-ambient-110397.mp3" preload="auto"></audio>
+  <audio id="hover" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7e7f3f9f3b.mp3?filename=dark-ambient-110397.mp3" preload="auto"></audio>
+  <audio id="levelup" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_9f7a6f.mp3?filename=level-up-191997.mp3" preload="auto"></audio>
+  <canvas id="particles"></canvas>
+  <canvas id="runes"></canvas>
+  <div class="overlay"></div>
+  <div class="home-container">
+    <div class="content" id="content">
+      <h1 class="title">ShadowLevel</h1>
+      <p class="subtitle">Controle o sistema com suas próprias mãos</p>
+      <div class="system-message">
+        <p id="typewriter" class="typewriter"></p>
+      </div>
+      <nav class="menu" id="menu">
+        <a href="../src/pages/dashboard.html" data-link>Dashboard</a>
+        <a href="../src/pages/pong.html" data-link>Pong</a>
+        <a href="../src/pages/powers.html" data-link>Powers</a>
+        <a href="../src/pages/music.html" data-link>Music</a>
+      </nav>
+    </div>
+  </div>
+    <button id="sound-toggle" class="sound-btn">🔊</button>
+  <div class="footer">Sistema ShadowLevel • Imersão holográfica</div>
+  <script src="../src/js/index.js"></script>
+</body>
+</html>
