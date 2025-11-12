@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>ShadowLevel • Powers</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/powers.css">
+</head>
+<body>
+  <canvas id="magicBg"></canvas>
+  <div class="overlay"></div>
+  <header class="header">
+    <h1 class="title">Powers</h1>
+    <nav>
+      <a href="central.html">Central</a>
+    </nav>
+  </header>
+    <main class="powers">
+        <div class="circle" id="circle">
+            <button class="gesture" data-window="inventario">📦<span>Inventário</span></button>
+            <button class="gesture" data-window="sombras">🌑<span>Sombras</span></button>
+            <button class="gesture" data-window="habilidades">⚡<span>Habilidades</span></button>
+            <button class="gesture" data-window="dominio">🌀<span>Domínio</span></button>
+            <button class="gesture" data-window="mana">🔥<span>Mana Burst</span></button>
+        </div>
+    </main>
+  <section id="inventario" class="window">
+    <div class="window-header">
+      <h2>Inventário</h2><button class="close">✖</button>
+    </div>
+    <div class="window-content grid">
+      <div class="item">Espada</div>
+      <div class="item">Poção</div>
+      <div class="item">Cristal</div>
+    </div>
+  </section>
+
+  <section id="sombras" class="window">
+    <div class="window-header">
+      <h2>Sombras</h2><button class="close">✖</button>
+    </div>
+    <div class="window-content">
+      <p>Exército de sombras conjurado. Silhuetas aparecem em formação.</p>
+    </div>
+  </section>
+
+  <section id="habilidades" class="window">
+    <div class="window-header">
+      <h2>Habilidades</h2><button class="close">✖</button>
+    </div>
+    <div class="window-content">
+      <ul>
+        <li>Shadow Extraction</li>
+        <li>Domain Expansion</li>
+        <li>Mana Burst</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="dominio" class="window">
+    <div class="window-header">
+      <h2>Domínio</h2><button class="close">✖</button>
+    </div>
+    <div class="window-content">
+      <p>Expansão de domínio ativada. Runas circulares se expandem pelo campo.</p>
+    </div>
+  </section>
+
+  <section id="mana" class="window">
+    <div class="window-header">
+      <h2>Mana Burst</h2><button class="close">✖</button>
+    </div>
+    <div class="window-content">
+      <p>Explosão de energia mágica liberada. O ambiente vibra com poder.</p>
+    </div>
+  </section>
+
+  <footer class="footer">ShadowLevel • Invocação de Gestos</footer>
+
+  <script src="../js/powers.js"></script>
+</body>
+</html>
