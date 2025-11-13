@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const winScreen = document.getElementById('win-screen');
   const loseScreen = document.getElementById('lose-screen');
   const bgMusic = document.getElementById('bg-music');
+  
   const prompts = {
     defesa: document.getElementById('prompt-defesa'),
     ataque: document.getElementById('prompt-ataque'),
@@ -18,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   const config = {
     parryWindow: 400,
-    telegraphTime: 1000, 
+    telegraphTime: 1000,
     postParryWindow: 800,
     stunDuration: 3000,
     playerDamage: 25,
@@ -28,14 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let gameTimers = [];
   let musicStarted = false;
 
-  let opponent = {
-    hp: 100, maxHp: 100,
-    stance: 100, maxStance: 100,
-  };
-  let player = {
-    hp: 100, maxHp: 100,
-    super: 0, maxSuper: 100,
-  };
+  let opponent = { hp: 100, maxHp: 100, stance: 100, maxStance: 100 };
+  let player = { hp: 100, maxHp: 100, super: 0, maxSuper: 100 };
+
   const opponentSprites = {
     idle: '../img/duel/opponent_idle.png',
     telegraph: '../img/duel/opponent_telegraph.png',
@@ -43,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     broken: '../img/duel/opponent_broken.png',
     defeated: '../img/duel/opponent_defeated.png'
   };
+
   function gameLoop() {
     if (gameState !== 'IDLE') return;
     const nextAttackTime = Math.random() * 2000 + 1000;
@@ -51,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function startOpponentAttack() {
     if (gameState !== 'IDLE') return;
-
     gameState = 'TELEGRAPH';
     setOpponentSprite('telegraph');
     showPrompt('defesa', true);
@@ -59,17 +55,18 @@ document.addEventListener('DOMContentLoaded', () => {
     gameTimers.push(setTimeout(() => {
       gameState = 'PARRY_WINDOW';
       gameTimers.push(setTimeout(() => {
-        if (gameState === 'PARRY_WINDOW') {
-          handlePlayerDamage();
-        }
+        if (gameState === 'PARRY_WINDOW') handlePlayerDamage();
       }, config.parryWindow));
     }, config.telegraphTime));
   }
-
   function handlePlayerInput(key) {
+    if (key === 'a') flashIcon('defesa');
+    if (key === 's') flashIcon('ataque');
+    if (key === 'd') flashIcon('ruptura');
+    if (key === 'w') flashIcon('super');
     if (!musicStarted && gameState !== 'GAME_OVER') {
       bgMusic.volume = 0.3;
-      bgMusic.play().catch(e => console.warn("Audio play failed:", e));
+      bgMusic.play().catch(e => console.warn(e));
       musicStarted = true;
     }
 
@@ -77,7 +74,6 @@ document.addEventListener('DOMContentLoaded', () => {
       handleSuper();
       return;
     }
-
     switch (gameState) {
       case 'PARRY_WINDOW':
         if (key === 'a') {
@@ -85,11 +81,10 @@ document.addEventListener('DOMContentLoaded', () => {
           clearAllTimers();
           setOpponentSprite('parried');
           playFx('parry');
-          
           showPrompt('defesa', false);
           showPrompt('ataque', true);
           showPrompt('ruptura', true);
-
+          
           gameTimers.push(setTimeout(() => {
             if (gameState === 'POST_PARRY') resetToIdle();
           }, config.postParryWindow));
@@ -107,208 +102,113 @@ document.addEventListener('DOMContentLoaded', () => {
         break;
     }
   }
-
   function handleRiposte() {
-    gameState = 'BUSY';
-    clearAllTimers();
-    playFx('attack'); 
-
+    gameState = 'BUSY'; clearAllTimers(); playFx('attack'); 
     opponent.hp = Math.max(0, opponent.hp - 10);
     player.super = Math.min(player.maxSuper, player.super + 25);
-    
     updateUI();
-    if (opponent.hp <= 0) {
-      handleVictory();
-    } else {
-      gameTimers.push(setTimeout(resetToIdle, 600)); 
-    }
+    if (opponent.hp <= 0) handleVictory();
+    else gameTimers.push(setTimeout(resetToIdle, 600)); 
   }
-
   function handleRupture() {
-    gameState = 'BUSY';
-    clearAllTimers();
-    playFx('break');
-
+    gameState = 'BUSY'; clearAllTimers(); playFx('break');
     opponent.stance = Math.max(0, opponent.stance - 35);
     updateUI();
-
-    if (opponent.stance <= 0) {
-      handleStanceBreak();
-    } else if (opponent.hp <= 0) {
-      handleVictory();
-    } else {
-      gameTimers.push(setTimeout(resetToIdle, 800)); 
-    }
+    if (opponent.stance <= 0) handleStanceBreak();
+    else if (opponent.hp <= 0) handleVictory();
+    else gameTimers.push(setTimeout(resetToIdle, 800)); 
   }
-  
   function handleStanceBreak() {
-    gameState = 'STUNNED';
-    clearAllTimers();
-    setOpponentSprite('broken');
+    gameState = 'STUNNED'; clearAllTimers(); setOpponentSprite('broken');
     showMessage('POSTURA QUEBRADA!', 'break');
-
-    if (player.super >= player.maxSuper) {
-      showPrompt('super', true, 'ready');
-    }
-    
+    if (player.super >= player.maxSuper) showPrompt('super', true, 'ready');
     gameTimers.push(setTimeout(() => {
-      if (gameState === 'STUNNED') {
-        opponent.stance = opponent.maxStance;
-        updateUI();
-        resetToIdle();
-      }
+      if (gameState === 'STUNNED') { opponent.stance = opponent.maxStance; updateUI(); resetToIdle(); }
     }, config.stunDuration));
   }
-  
   function handleSuper() {
-    gameState = 'BUSY';
-    clearAllTimers();
-    playFx('super'); 
-
-    opponent.hp = Math.max(0, opponent.hp - 50);
-    player.super = 0;
-    
+    gameState = 'BUSY'; clearAllTimers(); playFx('super'); 
+    opponent.hp = Math.max(0, opponent.hp - 50); player.super = 0;
     gameTimers.push(setTimeout(() => {
       updateUI();
-      if (opponent.hp <= 0) {
-        handleVictory();
-      } else {
-        if (opponent.stance <= 0) opponent.stance = opponent.maxStance;
-        updateUI();
-        resetToIdle();
-      }
-    }, 2500));
+      if (opponent.hp <= 0) handleVictory();
+      else { if (opponent.stance <= 0) opponent.stance = opponent.maxStance; updateUI(); resetToIdle(); }
+    }, 2500)); 
   }
   function handlePlayerDamage() {
-    gameState = 'BUSY';
-    clearAllTimers();
-    playFx('damage');
-    showMessage('DANO!', 'damage');
-    
-    player.hp = Math.max(0, player.hp - config.playerDamage);
-    updateUI();
-    
-    if (player.hp <= 0) {
-      handleDefeat();
-    } else {
-      gameTimers.push(setTimeout(resetToIdle, 500));
-    }
+    gameState = 'BUSY'; clearAllTimers(); playFx('damage'); showMessage('DANO!', 'damage');
+    player.hp = Math.max(0, player.hp - config.playerDamage); updateUI();
+    if (player.hp <= 0) handleDefeat();
+    else gameTimers.push(setTimeout(resetToIdle, 500));
   }
-
   function handleVictory() {
-    gameState = 'GAME_OVER';
-    clearAllTimers();
-    setOpponentSprite('defeated');
-    showMessage('VITÓRIA', 'victory');
-    body.className = 'state-win';
-    winScreen.classList.add('active');
-    bgMusic.pause();
-    musicStarted = false;
+    gameState = 'GAME_OVER'; clearAllTimers(); setOpponentSprite('defeated');
+    showMessage('VITÓRIA', 'victory'); body.className = 'state-win'; winScreen.classList.add('active'); bgMusic.pause(); musicStarted = false;
   }
-
   function handleDefeat() {
-    gameState = 'GAME_OVER';
-    clearAllTimers();
-    setOpponentSprite('defeated');
-    body.className = 'state-lose';
-    loseScreen.classList.add('active');
-    bgMusic.pause();
-    musicStarted = false;
+    gameState = 'GAME_OVER'; clearAllTimers(); setOpponentSprite('defeated');
+    body.className = 'state-lose'; loseScreen.classList.add('active'); bgMusic.pause(); musicStarted = false;
   }
 
   function resetToIdle() {
     if (gameState === 'GAME_OVER') return; 
-
-    gameState = 'IDLE';
-    clearAllTimers();
-    setOpponentSprite('idle');
-    
-    showPrompt('defesa', false);
-    showPrompt('ataque', false);
-    showPrompt('ruptura', false);
+    gameState = 'IDLE'; clearAllTimers(); setOpponentSprite('idle');
+    showPrompt('defesa', false); showPrompt('ataque', false); showPrompt('ruptura', false);
     body.className = 'state-battle';
     showPrompt('super', false, player.super >= player.maxSuper ? 'ready' : null);
     updateUI();
-    
     gameLoop();
   }
-
   function updateUI() {
     opponentHP.style.width = `${(opponent.hp / opponent.maxHp) * 100}%`;
     opponentStance.style.width = `${(opponent.stance / opponent.maxStance) * 100}%`;
     playerSuper.style.width = `${(player.super / player.maxSuper) * 100}%`;
-    playerHP.style.width = `${(player.hp / player.maxHp) * 100}%`;
-    
+    playerHP.style.width = `${(player.hp / player.maxHp) * 100}%`; 
     showPrompt('super', false, player.super >= player.maxSuper ? 'ready' : null);
-    if(gameState === 'STUNNED' && player.super >= player.maxSuper) {
-        showPrompt('super', true, 'ready');
-    }
+    if(gameState === 'STUNNED' && player.super >= player.maxSuper) showPrompt('super', true, 'ready');
   }
-
   function setOpponentSprite(state) {
-    if (opponentSprites[state]) {
-      opponentImg.src = opponentSprites[state];
-      opponentImg.className = state;
-    }
+    if (opponentSprites[state]) { opponentImg.src = opponentSprites[state]; opponentImg.className = state; }
   }
-
   function showPrompt(promptKey, isActive, stateClass = 'prompt') {
     const el = prompts[promptKey];
+    el.classList.remove('prompt', 'ready', 'active-input'); 
+    
     if (isActive) {
       el.classList.add(stateClass);
     } else {
-      el.classList.remove('prompt'); 
-      el.classList.remove('ready'); 
       if(stateClass === 'ready') el.classList.add('ready');
     }
   }
+  function flashIcon(promptKey) {
+    const el = prompts[promptKey];
+    el.classList.add('active-input');
+    setTimeout(() => el.classList.remove('active-input'), 200);
+  }
 
   function showMessage(msg, className) {
-    gameMessage.textContent = msg;
-    gameMessage.className = `game-message ${className}`;
+    gameMessage.textContent = msg; gameMessage.className = `game-message ${className}`;
   }
-
-  function clearAllTimers() {
-    gameTimers.forEach(timer => clearTimeout(timer));
-    gameTimers = [];
-  }
-
+  function clearAllTimers() { gameTimers.forEach(timer => clearTimeout(timer)); gameTimers = []; }
   function playFx(effect) {
     if (gameState === 'GAME_OVER') return; 
-
-    body.classList.remove('player-damaged', 'player-parry', 'player-super');
-    arena.classList.remove('shake');
-    
+    body.classList.remove('player-damaged', 'player-parry', 'player-super'); arena.classList.remove('shake');
     if (window.duelEffects) {
       switch (effect) {
-        case 'damage':
-          body.classList.add('player-damaged');
-          arena.classList.add('shake');
-          break;
-        case 'parry':
-          body.classList.add('player-parry');
-          window.duelEffects.doParryFx();
-          break;
-        case 'attack':
-          window.duelEffects.doAttackFx();
-          break;
-        case 'break':
-          arena.classList.add('shake');
-          window.duelEffects.doBreakFx();
-          break;
-        case 'super':
-          body.classList.add('player-super');
-          window.duelEffects.doSuperFx();
-          break;
+        case 'damage': body.classList.add('player-damaged'); arena.classList.add('shake'); break;
+        case 'parry': body.classList.add('player-parry'); window.duelEffects.doParryFx(); break;
+        case 'attack': window.duelEffects.doAttackFx(); break;
+        case 'break': arena.classList.add('shake'); window.duelEffects.doBreakFx(); break;
+        case 'super': body.classList.add('player-super'); window.duelEffects.doSuperFx(); break;
       }
     }
   }
-
+  window.handleDuelInput = handlePlayerInput;
   window.addEventListener('keydown', (e) => {
     handlePlayerInput(e.key.toLowerCase());
   });
 
-  console.log("Duelo Iniciado. Use A (Defesa), S (Ataque), D (Ruptura), W (Super).");
+  console.log("Duelo Iniciado.");
   body.className = 'state-battle';
   updateUI();
   gameLoop();

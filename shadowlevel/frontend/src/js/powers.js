@@ -1,12 +1,13 @@
 const gesturesConfig = [
-  { id: 'inventario', label: 'Inventário', circleEmoji: '📦', physicalEmoji: '✋', physicalLabel: 'Mão aberta — mostrar/abrir' },
-  { id: 'sombras',    label: 'Sombras',    circleEmoji: '🌑', physicalEmoji: '✊', physicalLabel: 'Punho fechado — conjurar' },
-  { id: 'habilidades',label: 'Habilidades',circleEmoji: '⚡', physicalEmoji: '☝️', physicalLabel: 'Dedo apontado — selecionar' },
-  { id: 'dominio',    label: 'Domínio',    circleEmoji: '🌀', physicalEmoji: '🤲', physicalLabel: 'Mãos abertas — expandir' },
-  { id: 'mana',       label: 'Mana Burst', circleEmoji: '🔥', physicalEmoji: '🤘', physicalLabel: 'Energia/estalo — liberar' },
+  { id: 'inventario', label: 'Inventário', circleEmoji: '📦', physicalEmoji: '🤙', physicalLabel: 'Tá tranquilo, tá favorável' },
+  { id: 'sombras',    label: 'Arise',    circleEmoji: '🌑', physicalEmoji: '✊', physicalLabel: 'Punho fechado' },
+  { id: 'habilidades',label: 'Habilidades',circleEmoji: '⚡', physicalEmoji: '☝️', physicalLabel: 'Apontando para cima' },
+  { id: 'dominio',    label: 'Aura',    circleEmoji: '🌀', physicalEmoji: '✋', physicalLabel: 'Mão aberta' },
+  { id: 'mana',       label: 'Mana', circleEmoji: '🔥', physicalEmoji: '✌️', physicalLabel: '2 com os dedos' },
 ];
 const circle = document.getElementById('circle');
 let existingButtons = circle.querySelectorAll('.gesture');
+
 if (existingButtons.length !== gesturesConfig.length) {
   circle.innerHTML = '';
   gesturesConfig.forEach(g => {
@@ -35,10 +36,10 @@ if (existingButtons.length !== gesturesConfig.length) {
   `;
   document.body.appendChild(panel);
 })();
-
 const gestures = Array.from(circle.querySelectorAll('.gesture'));
 let angle = 0;            
 const radius = Math.min(circle.offsetWidth, circle.offsetHeight) * 0.42; 
+
 function positionGestures() {
   const cx = circle.offsetWidth / 2;
   const cy = circle.offsetHeight / 2;
@@ -65,16 +66,44 @@ positionGestures();
 animateRing();
 
 const windows = document.querySelectorAll('.window');
+let autoCloseTimer = null;
+
+function cleanupSpecialAnimations() {
+    console.log("Limpando animações especiais...");
+    document.body.classList.remove('domain-expanded', 'shadows-active');
+    const shadowFigure = document.querySelector('.shadow-figure-container');
+    if (shadowFigure) {
+        shadowFigure.classList.remove('active');
+    }
+}
+
 gestures.forEach(btn => {
   btn.addEventListener('click', () => {
+    if (autoCloseTimer) {
+        clearTimeout(autoCloseTimer);
+    }
+    cleanupSpecialAnimations();
+
     const target = document.getElementById(btn.dataset.window);
     windows.forEach(w => w.classList.remove('active'));
-    if (target) target.classList.add('active');
+    
+    if (target) {
+        target.classList.add('active');
+        autoCloseTimer = setTimeout(() => {
+            target.classList.remove('active');
+            cleanupSpecialAnimations();
+        }, 3000);
+    }
   });
 });
+
 document.querySelectorAll('.window .close').forEach(closeBtn => {
   closeBtn.addEventListener('click', () => {
+    if (autoCloseTimer) {
+        clearTimeout(autoCloseTimer);
+    }
     closeBtn.closest('.window').classList.remove('active');
+    cleanupSpecialAnimations();
   });
 });
 
@@ -96,6 +125,7 @@ document.querySelectorAll('.window .close').forEach(closeBtn => {
 
   const mouse = { x: window.innerWidth/2, y: window.innerHeight/2 };
   window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+  
   const particles = Array.from({length: 150}, () => ({
     x: Math.random() * canvas.width,
     y: Math.random() * canvas.height,
@@ -147,6 +177,7 @@ document.querySelectorAll('.window .close').forEach(closeBtn => {
       ctx.fill();
     });
   }
+
   function drawRunes() {
     rctx.clearRect(0,0,runes.width,runes.height);
     rctx.save();
@@ -180,6 +211,10 @@ document.querySelectorAll('.window .close').forEach(closeBtn => {
 })();
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
+    if (autoCloseTimer) {
+        clearTimeout(autoCloseTimer);
+    }
     document.querySelectorAll('.window.active').forEach(w => w.classList.remove('active'));
+    cleanupSpecialAnimations();
   }
 });
