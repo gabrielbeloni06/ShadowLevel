@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>ShadowLevel • Music</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/music.css">
+</head>
+<body>
+  <canvas id="visualizer"></canvas>
+  <div class="overlay"></div>
+
+  <header class="header">
+    <h1 class="title">Music</h1>
+    <nav>
+      <a href="../../public/index.html">Home</a>
+      <a href="central.html">Central</a>
+    </nav>
+  </header>
+
+  <main class="player-hub">
+    <div class="player-card">
+      <div class="album-art-container">
+        <img src="../img/music/art_placeholder.jpg" id="albumArt" alt="Capa do Álbum">
+        <div class="album-art-glow"></div>
+      </div>
+      <div class="track-info">
+        <h2 id="trackTitle">Selecione uma música</h2>
+        <p id="trackArtist">Playlist do Sistema</p>
+      </div>
+      <div class="seek-bar-container">
+        <span id="currentTime">0:00</span>
+        <input type="range" id="seekBar" value="0" step="1">
+        <span id="totalTime">0:00</span>
+      </div>
+      <div class="controls">
+        <button id="prevBtn" class="control-btn">⏮</button>
+        <button id="playPauseBtn" class="control-btn play">▶</button>
+        <button id="nextBtn" class="control-btn">⏭</button>
+      </div>
+    </div>
+  </main>
+
+  <aside class="gestos-panel">
+    <h2>Gestos de Controle</h2>
+    <ul>
+      <li><span class="emo">✋</span><span>Mão Aberta:</span> <span class="action">Play / Pause</span></li>
+      <li><span class="emo">👆</span><span>Mão p/ Cima:</span> <span class="action">Aumentar Volume</span></li>
+      <li><span class="emo">👇</span><span>Mão p/ Baixo:</span> <span class="action">Diminuir Volume</span></li>
+      <li><span class="emo">👉</span><span>Deslizar Direita:</span> <span class="action">Próxima Faixa</span></li>
+      <li><span class="emo">👈</span><span>Deslizar Esquerda:</span> <span class="action">Faixa Anterior</span></li>
+    </ul>
+  </aside>
+
+  <aside class="playlist-panel">
+    <h2>Playlist: Nível Sombra</h2>
+    <ul id="playlistUI">
+      </ul>
+  </aside>
+
+  <audio id="audioPlayer" crossorigin="anonymous"></audio>
+
+  <footer class="footer">ShadowLevel • Sincronizador de Áudio</footer>
+
+  <script src="../js/music.js"></script>
+</body>
+</html>
