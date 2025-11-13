@@ -102,7 +102,7 @@ document.querySelectorAll('[data-tilt]').forEach(el => {
   function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
   resize(); window.addEventListener('resize', resize);
 
-  const glyphs = 'ᚠᚢᚦᚨᚱᚲᚷᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜ';
+  const glyphs = 'ᚠᚢᚦᚨᚱᚲᚷᚺᚾᛁᛃᛇᛈᛉᛊTᛒᛖᛗᛚᛜ';
   const circles = Array.from({ length: 4 }, (_, i) => ({
     r: 120 + i * 60,
     speed: 0.002 + i * 0.0008,
@@ -145,27 +145,156 @@ document.querySelectorAll('[data-tilt]').forEach(el => {
   draw();
 })();
 
-(function previewPong() {
-  const c = document.getElementById('previewPong');
+(function previewDuelo() {
+  const c = document.getElementById('previewDuelo');
+  if (!c) return;
   const ctx = c.getContext('2d');
-  function resize() { c.width = c.parentElement.clientWidth; c.height = c.parentElement.clientHeight; }
-  resize(); window.addEventListener('resize', resize);
 
-  let ball = { x: 30, y: 30, vx: 2.2, vy: 1.6, r: 6 };
+  function resize() {
+    if (!c.parentElement) return;
+    c.width = c.parentElement.clientWidth;
+    c.height = c.parentElement.clientHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  let swordX, swordY, swordRotation;
+  let shieldX, shieldY;
+  let impactAlpha, impactRadius;
+  let state;
+  let frameCount;
+
+  function initAnimation() {
+    swordX = -40;
+    swordY = c.height / 2;
+    swordRotation = Math.PI / 2; 
+    
+    shieldX = c.width / 2;
+    shieldY = c.height / 2;
+
+    impactAlpha = 0;
+    impactRadius = 0;
+    state = 'attack';
+    frameCount = 0;
+  }
+  initAnimation();
+  function drawShield(x, y) {
+    ctx.save();
+    ctx.translate(x, y);
+    
+    ctx.strokeStyle = 'rgba(134, 232, 255, 0.9)';
+    ctx.fillStyle = 'rgba(134, 232, 255, 0.1)';
+    ctx.lineWidth = 2;
+    ctx.shadowColor = 'rgba(134, 232, 255, 0.6)';
+    ctx.shadowBlur = 10;
+
+    const s = 25; 
+    ctx.beginPath();
+    ctx.moveTo(-s, -s * 0.6);
+    ctx.quadraticCurveTo(0, -s * 0.2, s, -s * 0.6);
+    ctx.quadraticCurveTo(s, s * 0.5, 0, s * 1.2); 
+    ctx.quadraticCurveTo(-s, s * 0.5, -s, -s * 0.6); 
+    
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.beginPath();
+    const is = s * 0.7; 
+    ctx.moveTo(-is, -is * 0.6);
+    ctx.quadraticCurveTo(0, -is * 0.2, is, -is * 0.6);
+    ctx.quadraticCurveTo(is, is * 0.5, 0, is * 1.2);
+    ctx.quadraticCurveTo(-is, is * 0.5, -is, -is * 0.6);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  function drawSword(x, y, rotation) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rotation);
+    ctx.fillStyle = 'rgba(169, 140, 255, 0.9)';
+    ctx.shadowColor = 'rgba(169, 140, 255, 0.6)';
+    ctx.shadowBlur = 10;
+    const size = 22; 
+    ctx.beginPath();
+    ctx.moveTo(0, -size * 2.5);
+    ctx.lineTo(size * 0.3, -size * 0.5);
+    ctx.lineTo(size * 0.5, size * 0.2); 
+    ctx.lineTo(-size * 0.5, size * 0.2);
+    ctx.lineTo(-size * 0.3, -size * 0.5);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(size * 1.2, -size * 0.4);
+    ctx.lineTo(size * 0.4, size * 0.5);
+    ctx.lineTo(-size * 0.4, size * 0.5);
+    ctx.lineTo(-size * 1.2, -size * 0.4);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = '#cfe8ff'; 
+    ctx.fillRect(-size * 0.1, size * 0.5, size * 0.2, size * 0.8); 
+    ctx.beginPath();
+    ctx.arc(0, size * 1.4, size * 0.2, 0, Math.PI*2); 
+    ctx.fill();
+    ctx.restore();
+  }
   function draw() {
     ctx.clearRect(0, 0, c.width, c.height);
-    ctx.fillStyle = 'rgba(134,232,255,0.35)';
-    ctx.fillRect(8, c.height/2-24, 6, 48);
-    ctx.fillRect(c.width-14, c.height/2-18, 6, 36);
-    const grad = ctx.createRadialGradient(ball.x, ball.y, 1, ball.x, ball.y, 16);
-    grad.addColorStop(0, 'rgba(134,232,255,0.9)');
-    grad.addColorStop(1, 'rgba(134,232,255,0.0)');
-    ctx.fillStyle = grad;
-    ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2); ctx.fill();
-
-    ball.x += ball.vx; ball.y += ball.vy;
-    if (ball.y < ball.r || ball.y > c.height - ball.r) ball.vy *= -1;
-    if (ball.x < ball.r || ball.x > c.width - ball.r) ball.vx *= -1;
+    if (c.width === 0 || c.height === 0) {
+      requestAnimationFrame(draw);
+      return;
+    }
+    
+    frameCount++;
+    drawShield(shieldX, shieldY);
+    if (state === 'attack') {
+      swordX += 4; 
+      if (swordX >= shieldX - 35) { 
+        state = 'impact';
+        impactAlpha = 1;
+        impactRadius = 5;
+        swordX -= 15; 
+        swordRotation += Math.PI / 12;
+      }
+    } else if (state === 'impact') {
+      impactAlpha -= 0.06; 
+      impactRadius += 2; 
+      if (impactAlpha <= 0) {
+        state = 'reset';
+        frameCount = 0; 
+      }
+      swordX -= 0.8;
+      swordRotation += Math.PI / 64;
+    } else if (state === 'reset') {
+      if (frameCount > 50) { 
+        swordX = -40;
+        swordY = c.height / 2;
+        swordRotation = Math.PI / 2;
+        state = 'attack';
+        frameCount = 0;
+      }
+    }
+    drawSword(swordX, swordY, swordRotation);
+    if (impactAlpha > 0) {
+      ctx.save();
+      ctx.translate(shieldX - 10, shieldY); 
+      ctx.strokeStyle = `rgba(255, 238, 138, ${impactAlpha})`; 
+      ctx.lineWidth = 2;
+      ctx.shadowBlur = 15 * impactAlpha;
+      ctx.shadowColor = `rgba(255, 154, 0, ${impactAlpha})`; 
+      
+      for (let i = 0; i < 12; i++) { 
+        const angle = (i / 12) * Math.PI * 2 + (frameCount * 0.1);
+        const sparkLen = 5 + Math.random() * 15;
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(angle) * impactRadius, Math.sin(angle) * impactRadius);
+        ctx.lineTo(Math.cos(angle) * (impactRadius + sparkLen), Math.sin(angle) * (impactRadius + sparkLen));
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
     requestAnimationFrame(draw);
   }
   draw();
@@ -173,10 +302,10 @@ document.querySelectorAll('[data-tilt]').forEach(el => {
 
 (function previewPowers() {
   const c = document.getElementById('previewPowers');
+  if (!c) return;
   const ctx = c.getContext('2d');
   function resize() { c.width = c.parentElement.clientWidth; c.height = c.parentElement.clientHeight; }
   resize(); window.addEventListener('resize', resize);
-
   let t = 0;
   function draw() {
     ctx.clearRect(0, 0, c.width, c.height);
@@ -196,6 +325,7 @@ document.querySelectorAll('[data-tilt]').forEach(el => {
 
 (function previewMusic() {
   const c = document.getElementById('previewMusic');
+  if (!c) return;
   const ctx = c.getContext('2d');
   function resize() { c.width = c.parentElement.clientWidth; c.height = c.parentElement.clientHeight; }
   resize(); window.addEventListener('resize', resize);
