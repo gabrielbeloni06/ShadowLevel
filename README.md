@@ -117,16 +117,19 @@ O script `backend/ai_controller.js`:
 ---
 
 
-## 🚀 **Ativação do Sistema (Como Rodar na Sua Máquina)**
+## 🚀 **Ativação do Sistema (Como Acessar o Site)**
 
-### **1. Clone o repositório**
-```bash
-git clone https://github.com/gabrielbeloni06/ShadowLevel
-```
-### **2. Abra o LiveServer do VsCode na pasta raíz do projeto:**
-`shadowlevel`
+### **1. Acesse o site do projeto:**
+`https://shadowlevel.netlify.app`
 
-### **3. Siga esse caminho:** 
-`shadowlevel/frontend/public/index.html`
+### **2. Vá em settings (Fica na esquerda da URL do site):**
+<img src="/shadowlevel/docs/all.png" width="200"/>
+
+### **3. Acesse as configurações do site:** 
+<img src="/shadowlevel/docs/config.png" width="300"/>`
+
+### **4. Habilite a webcam:**
+<img src="/shadowlevel/docs/webcam.png" width="400"/>
+
 
 
