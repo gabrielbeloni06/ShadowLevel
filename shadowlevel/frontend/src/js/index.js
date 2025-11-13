@@ -4,8 +4,9 @@ const content         = document.getElementById('content');
 const menu            = document.getElementById('menu');
 const typewriterEl    = document.getElementById('typewriter');
 const ambienceAudio   = document.getElementById('ambience');
-const pingAudio       = document.getElementById('ping');
-const hoverAudio      = document.getElementById('hover');
+const levelUpAudio    = document.getElementById('levelup'); 
+const soundToggleBtn  = document.getElementById('sound-toggle');
+let hasInteracted = false;
 function resizeCanvas() {
   [particlesCanvas, runesCanvas].forEach(c => {
     c.width = window.innerWidth;
@@ -14,7 +15,6 @@ function resizeCanvas() {
 }
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
-
 (function initParticles() {
   const ctx = particlesCanvas.getContext('2d');
   const particles = [];
@@ -100,60 +100,75 @@ function typewriter(el, text, speed = 38) {
     if (i < text.length) {
       setTimeout(tick, speed);
     } else {
-      try { pingAudio.currentTime = 0; pingAudio.play().catch(()=>{}); } catch {}
       menu.classList.add('active');
     }
   };
   tick();
 }
-
 function startIntro() {
-  try { ambienceAudio.volume = 0.35; ambienceAudio.play().catch(()=>{}); } catch {}
+  ambienceAudio.volume = 0.35;
+  let playPromise = ambienceAudio.play();
+
+  if (playPromise !== undefined) {
+    playPromise.then(_ => {
+      hasInteracted = true;
+    }).catch(error => {
+      console.warn("Autoplay bloqueado. Esperando interação.");
+      addInteractionListener();
+    });
+  }
+
   content.classList.add('active');
   setTimeout(() => typewriter(typewriterEl, fullMessage), 650);
 }
 
-menu.addEventListener('mouseover', (e) => {
-  if (e.target.matches('a')) {
-    try { hoverAudio.currentTime = 0; hoverAudio.play().catch(()=>{}); } catch {}
-  }
-});
+function addInteractionListener() {
+  if (hasInteracted) return;
+  
+  const startAudioOnInteraction = () => {
+    if (hasInteracted) return;
+    hasInteracted = true;
+    
+    if (ambienceAudio.paused && soundEnabled) {
+       ambienceAudio.play().catch(e => console.error("Erro ao tocar áudio:", e));
+    }
+    
+    document.removeEventListener('click', startAudioOnInteraction);
+    document.removeEventListener('keydown', startAudioOnInteraction);
+  };
 
+  document.addEventListener('click', startAudioOnInteraction);
+  document.addEventListener('keydown', startAudioOnInteraction);
+}
 document.querySelectorAll('[data-link]').forEach(a => {
   a.addEventListener('click', (e) => {
     e.preventDefault();
-    const href = a.getAttribute('href');
-    document.body.classList.add('fade-out');
-    content.classList.add('fade-out');
-    setTimeout(() => { window.location.href = href; }, 420);
-  });
-});
-
-const levelUpAudio = document.getElementById('levelup');
-document.querySelectorAll('[data-link]').forEach(a => {
-  a.addEventListener('click', (e) => {
-    e.preventDefault();
-    try { levelUpAudio.currentTime = 0; levelUpAudio.play().catch(()=>{}); } catch {}
+    if (soundEnabled) {
+        try { 
+            levelUpAudio.currentTime = 0; 
+            levelUpAudio.play().catch(()=>{}); 
+        } catch {}
+    }
     document.body.classList.add('fade-out');
     content.classList.add('fade-out');
     setTimeout(() => { window.location.href = a.getAttribute('href'); }, 600);
   });
 });
-
-const soundToggleBtn = document.getElementById('sound-toggle');
 let soundEnabled = true;
-
 function updateSoundIcon() {
   soundToggleBtn.textContent = soundEnabled ? "🔊" : "🔇";
 }
-
 soundToggleBtn.addEventListener('click', () => {
   soundEnabled = !soundEnabled;
   updateSoundIcon();
+  
   ambienceAudio.muted = !soundEnabled;
-  pingAudio.muted = !soundEnabled;
-  hoverAudio.muted = !soundEnabled;
-  levelUpAudio.muted = !soundEnabled;
+  levelUpAudio.muted = !soundEnabled; 
+  if (soundEnabled && ambienceAudio.paused && !hasInteracted) {
+     ambienceAudio.play().catch(e => console.error("Erro no toggle:", e));
+  }
+  
+  hasInteracted = true; 
 });
 
 updateSoundIcon();
