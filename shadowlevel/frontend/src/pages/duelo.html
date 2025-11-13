@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>ShadowLevel • Duelo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/duelo.css">
+</head>
+<body>
+  <canvas id="fx-canvas"></canvas>
+  <div class="overlay"></div>
+
+  <div id="win-screen" class="game-over-screen">
+    <img src="../img/duel/victory_bg.png" alt="Vitória">
+    <h1>VITÓRIA</h1>
+  </div>
+  <div id="lose-screen" class="game-over-screen">
+    <img src="../img/duel/defeat_bg.png" alt="Derrota">
+    <h1>DERROTA</h1>
+  </div>
+
+  <header class="header">
+    <h1 class="title">Duelo Sombrio</h1>
+    <nav>
+      <a href="central.html">Central</a>
+    </nav>
+  </header>
+
+  <main class="duel-arena">
+    <div class="opponent-area">
+      <div class="opponent-bars">
+        <div class="bar-label">HP</div>
+        <div class="bar-container hp-bar">
+          <div id="opponent-hp" class="bar-fill"></div>
+        </div>
+        <div class="bar-label">Escudo</div>
+        <div class="bar-container stance-bar">
+          <div id="opponent-stance" class="bar-fill"></div>
+        </div>
+      </div>
+      <div id="opponent-container">
+        <img src="../img/duel/opponent_idle.png" id="opponent" alt="Oponente Sombrio">
+      </div>
+      <div id="game-message" class="game-message"></div>
+    </div>
+
+    <div class="player-hub">
+      <div id="action-hub" class="action-hub">
+        <div class="action-slot" id="prompt-super">
+          <span>W/👍</span><p>Arise</p>
+        </div>
+        <div class="action-slot" id="prompt-defesa">
+          <span>A/🖐️</span><p>Defesa</p>
+        </div>
+        <div class="action-slot" id="prompt-ataque">
+          <span>S/👉</span><p>Ataque</p>
+        </div>
+        <div class="action-slot" id="prompt-ruptura">
+          <span>D/👈</span><p>Ruptura</p>
+        </div>
+      </div>
+
+      <div class="player-bars">
+        <div class="bar-label">Mana</div>
+        <div class="bar-container shadow-gauge">
+          <div id="player-super" class="bar-fill"></div>
+        </div>
+        <div class="bar-label">HP</div>
+        <div class="bar-container player-hp-bar">
+          <div id="player-hp" class="bar-fill"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">ShadowLevel • Arena de Reflexo</footer>
+
+  <audio id="bg-music" loop src="../audio/duel_music.mp3"></audio>
+
+  <script src="../js/duelo.js"></script>
+  <script src="../js/duel_effects.js"></script> 
+</body>
+</html>

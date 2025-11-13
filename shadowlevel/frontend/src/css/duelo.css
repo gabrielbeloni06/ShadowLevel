@@ -1,0 +1,326 @@
+:root {
+  --bg1: #05070f;
+  --bg2: #0a1020;
+  --cyan: #86e8ff;
+  --violet: #a98cff;
+  --red: #ff5f5f;
+  --yellow: #ffee8a;
+  --text: #cfe8ff;
+  --border: rgba(120, 220, 255, 0.35);
+  --panel: rgba(20, 26, 44, 0.55);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Orbitron', system-ui, sans-serif;
+  color: var(--text);
+  background-color: var(--bg1);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  transition: background-image 1s ease, background-color 0.5s ease;
+}
+
+body.state-battle {
+  background-image: url('../img/duel/battle_bg.png');
+}
+body.state-win {
+  background-image: url('../img/duel/victory_bg.png');
+}
+body.state-lose {
+  background-image: none;
+  background-color: #330000;
+}
+
+#fx-canvas { position: fixed; inset: 0; z-index: 2; }
+.overlay {
+  position: fixed; inset: 0; z-index: 1;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.4) 60%, transparent);
+  pointer-events: none;
+}
+.header {
+  position: relative; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 24px;
+}
+.header .title { font-size: 26px; color: var(--cyan); }
+.header nav a {
+  margin-left: 14px; text-decoration: none; color: var(--text);
+  border: 1px solid var(--border); padding: 8px 12px; border-radius: 8px;
+  background: rgba(18, 26, 44, 0.45);
+}
+
+.game-over-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(5px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1s ease;
+}
+.game-over-screen.active {
+  opacity: 1;
+}
+.game-over-screen img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.3;
+  z-index: -1;
+}
+.game-over-screen h1 {
+  font-size: 8vw;
+  color: var(--cyan);
+  text-shadow: 0 0 30px var(--cyan), 0 0 50px var(--cyan);
+  animation: pulse-prompt 2s infinite alternate;
+}
+#lose-screen h1 {
+  color: var(--red);
+  text-shadow: 0 0 30px var(--red), 0 0 50px var(--red);
+}
+
+.duel-arena {
+  position: relative; z-index: 5;
+  height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.opponent-area {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding-bottom: 120px;
+}
+
+#opponent-container {
+  position: relative;
+  width: 300px; 
+  height: 300px;
+}
+#opponent {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 20px var(--violet));
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.opponent-bars {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  max-width: 400px;
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+}
+.bar-label { font-size: 10px; color: var(--muted); letter-spacing: 2px; }
+.bar-container {
+  width: 100%;
+  height: 14px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: rgba(0,0,0,0.3);
+  padding: 2px;
+}
+.bar-fill {
+  height: 100%;
+  width: 100%;
+  border-radius: 2px;
+  transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.hp-bar .bar-fill {
+  background: linear-gradient(90deg, var(--red), #ff9a9a);
+  box-shadow: 0 0 10px var(--red);
+}
+.stance-bar .bar-fill {
+  background: linear-gradient(90deg, var(--yellow), #fff4c7);
+  box-shadow: 0 0 10px var(--yellow);
+}
+
+.player-hub {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.player-bars {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 20px;
+  width: 100%;
+  max-width: 400px;
+}
+.player-bars .bar-label {
+  grid-column: span 1;
+}
+.player-bars .bar-container {
+  grid-column: span 1;
+}
+.player-bars .bar-label:nth-of-type(2) {
+  grid-row: 2;
+}
+.player-bars .bar-container:nth-of-type(2) {
+  grid-row: 2;
+}
+
+
+.shadow-gauge .bar-fill {
+  background: linear-gradient(90deg, var(--violet), #d9cfff);
+  box-shadow: 0 0 10px var(--violet);
+}
+.player-hp-bar .bar-fill {
+  background: linear-gradient(90deg, var(--cyan), #c1faff);
+  box-shadow: 0 0 10px var(--cyan);
+}
+.action-hub {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+.action-slot {
+  width: 80px;
+  height: 80px;
+  border: 2px solid var(--border);
+  background: var(--panel);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.2;
+  transition: all 0.2s ease;
+  transform: scale(0.9);
+}
+.action-slot span {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+}
+.action-slot p {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.action-slot.prompt {
+  opacity: 1;
+  transform: scale(1);
+  box-shadow: 0 0 20px var(--cyan);
+  border-color: var(--cyan);
+  animation: pulse-prompt 1s infinite alternate;
+}
+.action-slot.prompt span, .action-slot.prompt p {
+  color: var(--cyan);
+}
+.action-slot.ready {
+  opacity: 1;
+  transform: scale(1);
+  box-shadow: 0 0 25px var(--violet);
+  border-color: var(--violet);
+}
+@keyframes pulse-prompt {
+  from { transform: scale(1); }
+  to { transform: scale(1.05); }
+}
+
+.game-message {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  font-size: 48px;
+  font-weight: 700;
+  opacity: 0;
+  pointer-events: none;
+  text-shadow: 0 0 20px currentColor;
+  animation: show-message 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+@keyframes show-message {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+  50%  { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+}
+.game-message.parry { color: var(--cyan); }
+.game-message.break { color: var(--yellow); }
+.game-message.damage { color: var(--red); }
+.game-message.victory { color: var(--cyan); animation-duration: 3s; }
+body.player-damaged {
+  animation: player-damage-flash 0.3s ease;
+}
+@keyframes player-damage-flash {
+  0%, 100% { background-color: var(--bg1); }
+  50% { background-color: #330000; }
+}
+.duel-arena.shake {
+  animation: screen-shake 0.2s linear;
+}
+@keyframes screen-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+}
+
+body.player-parry {
+  animation: player-parry-flash 0.2s ease;
+}
+@keyframes player-parry-flash {
+  0%, 100% { background-color: var(--bg1); }
+  50% { background-color: #002c33; }
+}
+
+body.player-super {
+  animation: player-super-darken 2s forwards;
+}
+@keyframes player-super-darken {
+  0% { background-color: var(--bg1); }
+  20% { background-color: #000; }
+  100% { background-color: #000; }
+}
+
+#opponent.telegraph {
+  transform: scale(1.1) translateY(-10px);
+  filter: drop-shadow(0 0 30px var(--yellow));
+}
+#opponent.parried {
+  transform: scale(0.9) translateX(15px);
+  animation: opponent-shake 0.3s;
+}
+#opponent.damaged {
+  animation: opponent-damage-flash 0.2s;
+}
+@keyframes opponent-damage-flash {
+  0%, 100% { filter: drop-shadow(0 0 20px var(--violet)); }
+  50% { filter: drop-shadow(0 0 10px var(--red)) brightness(1.5); }
+}
+#opponent.broken {
+  transform: scale(0.8) translateY(20px);
+  filter: drop-shadow(0 0 5px #000) grayscale(0.5);
+}
+#opponent.defeated {
+  transform: scale(0.7) translateY(40px) rotate(-15deg);
+  filter: drop-shadow(0 0 5px #000) grayscale(1) brightness(0.5);
+  transition: all 1s ease;
+}
+
+.footer { position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); }
