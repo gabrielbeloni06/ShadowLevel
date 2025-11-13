@@ -19,20 +19,30 @@
     <main class="powers">
         <div class="circle" id="circle">
             <button class="gesture" data-window="inventario">📦<span>Inventário</span></button>
-            <button class="gesture" data-window="sombras">🌑<span>Sombras</span></button>
+            <button class="gesture" data-window="sombras">🌑<span>Arise</span></button>
             <button class="gesture" data-window="habilidades">⚡<span>Habilidades</span></button>
-            <button class="gesture" data-window="dominio">🌀<span>Domínio</span></button>
-            <button class="gesture" data-window="mana">🔥<span>Mana Burst</span></button>
+            <button class="gesture" data-window="dominio">🌀<span>Aura</span></button>
+            <button class="gesture" data-window="mana">🔥<span>Mana</span></button>
         </div>
     </main>
+    
   <section id="inventario" class="window">
     <div class="window-header">
       <h2>Inventário</h2><button class="close">✖</button>
     </div>
-    <div class="window-content grid">
-      <div class="item">Espada</div>
-      <div class="item">Poção</div>
-      <div class="item">Cristal</div>
+    <div class="window-content grid inventory-grid">
+      <div class="item">
+        <img src="../img/espada_icon.png" alt="Espada" class="item-icon">
+        <span>Adaga Sombria</span>
+      </div>
+      <div class="item">
+        <img src="../img/pocao_icon.png" alt="Poção" class="item-icon">
+        <span>Elixir da Vida</span>
+      </div>
+      <div class="item">
+        <img src="../img/cristal_icon.png" alt="Cristal" class="item-icon">
+        <span>Pedra de Essência</span>
+      </div>
     </div>
   </section>
 
@@ -41,7 +51,7 @@
       <h2>Sombras</h2><button class="close">✖</button>
     </div>
     <div class="window-content">
-      <p>Exército de sombras conjurado. Silhuetas aparecem em formação.</p>
+      <p>Sombra conjurada. Arise...</p>
     </div>
   </section>
 
@@ -49,35 +59,52 @@
     <div class="window-header">
       <h2>Habilidades</h2><button class="close">✖</button>
     </div>
-    <div class="window-content">
-      <ul>
-        <li>Shadow Extraction</li>
-        <li>Domain Expansion</li>
-        <li>Mana Burst</li>
-      </ul>
+    <div class="window-content skills-list">
+      <div class="skill-item">
+        <img src="../img/skill_extracao.png" alt="Extração" class="skill-icon">
+        <span>Arise</span>
+      </div>
+      <div class="skill-item">
+        <img src="../img/skill_dominio.png" alt="Domínio" class="skill-icon">
+        <span>Intenção Assassina</span>
+      </div>
+      <div class="skill-item">
+        <img src="../img/skill_burst.png" alt="Burst" class="skill-icon">
+        <span>Domínio das Sombras</span>
+      </div>
     </div>
   </section>
 
   <section id="dominio" class="window">
     <div class="window-header">
-      <h2>Domínio</h2><button class="close">✖</button>
+      <h2>Aura</h2><button class="close">✖</button>
     </div>
     <div class="window-content">
-      <p>Expansão de domínio ativada. Runas circulares se expandem pelo campo.</p>
+      <p>Liberação da aura ativada.</p>
     </div>
   </section>
 
   <section id="mana" class="window">
     <div class="window-header">
-      <h2>Mana Burst</h2><button class="close">✖</button>
+      <h2>Mana Liberada</h2><button class="close">✖</button>
     </div>
     <div class="window-content">
-      <p>Explosão de energia mágica liberada. O ambiente vibra com poder.</p>
+      <p>Explosão de energia mágica liberada.</p>
     </div>
   </section>
+
+  <div class="shadow-figure-container">
+    <img src="../img/sombra_figura.png" alt="Monarca das Sombras" class="shadow-figure">
+    <div class="shadow-aura shadow-aura-1"></div>
+    <div class="shadow-aura shadow-aura-2"></div>
+    <div class="shadow-aura shadow-aura-3"></div>
+    <div class="shadow-ray shadow-ray-1"></div>
+    <div class="shadow-ray shadow-ray-2"></div>
+  </div>
 
   <footer class="footer">ShadowLevel • Invocação de Gestos</footer>
 
   <script src="../js/powers.js"></script>
+  <script src="../js/powers_animations.js"></script>
 </body>
 </html>
