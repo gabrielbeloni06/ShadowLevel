@@ -83,7 +83,7 @@ A principal funcionalidade é o **Oráculo**, que traduz seus movimentos da mão
 - 100% rodando no navegador via JavaScript ES6 Modules
 
 ### **Funcionamento**
-O script `backend/ai_controller.js`:
+O script `shadowlevel/codigo/src/intelligentSystem/ai_controller.js`:
 1. Ativa a webcam  
 2. Analisa frames em tempo real  
 3. Classifica o gesto entre os pré-definidos
@@ -126,7 +126,7 @@ O script `backend/ai_controller.js`:
 <img src="/shadowlevel/docs/all.png" width="200"/>
 
 ### **3. Acesse as configurações do site:** 
-<img src="/shadowlevel/docs/config.png" width="300"/>`
+<img src="/shadowlevel/docs/config.png" width="300"/>
 
 ### **4. Habilite a webcam:**
 <img src="/shadowlevel/docs/webcam.png" width="400"/>
